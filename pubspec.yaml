@@ -1,6 +1,6 @@
 name: flexible_table
 description: A table with flexible sized colums and an effectively unlimited number of rows that retains performance.
-repository: https://github.com/islandlifetech/flexible_table
+repository: https://github.com/islandlifetechnologies/flexible_table
 version: 3.0.0
 
 environment:
