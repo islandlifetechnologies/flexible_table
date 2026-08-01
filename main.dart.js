@@ -68819,7 +68819,7 @@ k(a){return"Provider<"+this.a.k(0)+"> not found for "+this.b.k(0)},
 $icr:1}
 A.F3.prototype={
 J(a){var s=null
-return new A.vg(B.G5,"Flutter Demo",A.agG(s,A.aiY(B.a_,s,s,B.FO),!0),s)}}
+return new A.vg(B.G5,"Flexible Table",A.agG(s,A.aiY(B.a_,s,s,B.FO),!0),s)}}
 A.F4.prototype={
 J(a){var s,r=null,q=A.ar(a).ax,p=q.y2
 q=p==null?q.c:p
