@@ -1,0 +1,32 @@
+name: Publish GH Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - example/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Flutter SDK
+        uses: flutter-actions/setup-flutter@v4
+
+      - name: Build Examples
+        shell: bash
+        run: |
+          set -e
+
+          cd example
+          flutter pub get
+          flutter build web --release
+
+      - name: Publish Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./example/build/web
