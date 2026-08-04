@@ -101,45 +101,48 @@ class FlexDefaultHeaderDividerBuilder extends FlexHeaderDividerBuilder {
   /// The [draggingColor], [draggingIndicatorColor], and [draggingPadding] will
   /// be applied when the divider has been activated by being pressed and can
   /// be actively dragged.
+  ///
+  /// For backwards compatibility, this is effectively the same as calling
+  /// [FlexDefaultHeaderDividerBuilder.light].
   const FlexDefaultHeaderDividerBuilder({
-    this.color = Colors.transparent,
-    this.draggingColor = Colors.black26,
-    this.draggingIndicatorColor = Colors.black,
+    this.color,
+    this.draggingColor,
+    this.draggingIndicatorColor,
     this.draggingPadding = const EdgeInsets.symmetric(vertical: 4.0),
-    this.hoverColor = Colors.black12,
-    this.hoverIndicatorColor = Colors.black87,
+    this.hoverColor,
+    this.hoverIndicatorColor,
     this.hoverPadding = const EdgeInsets.symmetric(vertical: 8.0),
-    this.indicatorColor = Colors.black54,
+    this.indicatorColor,
     this.padding = const EdgeInsets.symmetric(vertical: 12.0),
   }) : super();
 
   /// The color to use as the background of the divider when it is neither
   /// hovered nor pressed.
-  final Color color;
+  final Color? color;
 
   /// The color to use as the background of the divider when it is pressed.
-  final Color draggingColor;
+  final Color? draggingColor;
 
   /// The color to use as the draggable indicator of the divider when it is
   /// pressed.
-  final Color draggingIndicatorColor;
+  final Color? draggingIndicatorColor;
 
   /// The internal padding around the indicator when the divider is pressed.
   final EdgeInsets draggingPadding;
 
   /// The color to use as the background of the divider when it is hovered.
-  final Color hoverColor;
+  final Color? hoverColor;
 
   /// The color to use as the draggable indicator of the divider when it is
   /// hovered.
-  final Color hoverIndicatorColor;
+  final Color? hoverIndicatorColor;
 
   /// The internal padding around the indicator when the divider is hovered.
   final EdgeInsets hoverPadding;
 
   /// The color to use as the draggable indicator of the divider when it is
   /// neither pressed nor hovered.
-  final Color indicatorColor;
+  final Color? indicatorColor;
 
   /// The internal padding around the indicator when the divider is neither
   /// pressed nor hovered.
@@ -154,40 +157,58 @@ class FlexDefaultHeaderDividerBuilder extends FlexHeaderDividerBuilder {
   /// indicator.
   @override
   Widget build(
+    BuildContext context,
     Axis axis,
     int index,
     bool resizable,
     bool dragging,
     bool highlighted,
     MultiSplitViewThemeData themeData,
-  ) => ColoredBox(
-    color: dragging
-        ? draggingColor
-        : highlighted
-        ? hoverColor
-        : color,
-    child: Center(
-      child: AnimatedPadding(
-        duration: const Duration(milliseconds: 300),
-        padding: dragging
-            ? draggingPadding
-            : highlighted
-            ? hoverPadding
-            : padding,
-        child: SizedBox(
-          width: 2.0,
-          height: double.infinity,
-          child: ColoredBox(
-            color: dragging
-                ? draggingIndicatorColor
-                : highlighted
-                ? hoverIndicatorColor
-                : indicatorColor,
+  ) {
+    final theme = Theme.of(context);
+    final textColor =
+        theme.textTheme.bodyMedium?.color ??
+        (theme.brightness == Brightness.light ? Colors.black : Colors.white);
+
+    final color = this.color ?? Colors.transparent;
+    final draggingColor =
+        this.draggingColor ?? textColor.withValues(alpha: 0.24);
+    final draggingIndicatorColor = this.draggingIndicatorColor ?? textColor;
+    final hoverColor = this.hoverColor ?? textColor.withValues(alpha: 0.12);
+    final hoverIndicatorColor =
+        this.hoverIndicatorColor ?? textColor.withValues(alpha: 0.87);
+    final indicatorColor =
+        this.indicatorColor ?? textColor.withValues(alpha: 0.54);
+
+    return ColoredBox(
+      color: dragging
+          ? draggingColor
+          : highlighted
+          ? hoverColor
+          : color,
+      child: Center(
+        child: AnimatedPadding(
+          duration: const Duration(milliseconds: 300),
+          padding: dragging
+              ? draggingPadding
+              : highlighted
+              ? hoverPadding
+              : padding,
+          child: SizedBox(
+            width: 2.0,
+            height: double.infinity,
+            child: ColoredBox(
+              color: dragging
+                  ? draggingIndicatorColor
+                  : highlighted
+                  ? hoverIndicatorColor
+                  : indicatorColor,
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// Builds a divider between the table headers.  The divider is the draggable
@@ -199,6 +220,7 @@ abstract class FlexHeaderDividerBuilder {
   const FlexHeaderDividerBuilder();
 
   Widget build(
+    BuildContext context,
     Axis axis,
     int index,
     bool resizable,
@@ -872,8 +894,8 @@ class _FlexFilterHeaderCellState extends State<_FlexFilterHeaderCell> {
           (theme.listTileTheme.titleTextStyle ?? theme.textTheme.bodyLarge)
               ?.fontSize ??
           14.0,
-      fontFamily: "monospace",
-      fontFamilyFallback: const <String>["Courier"],
+      fontFamily: 'monospace',
+      fontFamilyFallback: const <String>['Courier'],
     );
 
     return InkWell(
@@ -1144,7 +1166,16 @@ class _FlexTableHeaderState extends State<_FlexTableHeader> {
       child: MultiSplitView(
         controller: multiSplitViewController,
         dividerBuilder: widget.resizable
-            ? widget.dividerBuilder.build
+            ? (axis, index, resizable, dragging, highlighted, themeData) =>
+                  widget.dividerBuilder.build(
+                    context,
+                    axis,
+                    index,
+                    resizable,
+                    dragging,
+                    highlighted,
+                    themeData,
+                  )
             : (axis, index, resizable, dragging, highlighted, themeData) =>
                   widget.builder.build(
                     child: const SizedBox(),
