@@ -1,3 +1,8 @@
+## 3.2.0
+
+- Updated FlexStripeCellBuilder to utilize the theme for stripes.
+- Added `shrinkWrap` and `ScrollController` as passthrough options to `FlexTable`
+
 ## 3.1.0
 
 - Added BuildContext to the FlexHeaderDividerBuilder so it could read from the theme.

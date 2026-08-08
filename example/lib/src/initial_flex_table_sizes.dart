@@ -23,12 +23,10 @@ class InitialFlexTableSizes extends StatefulWidget {
 }
 
 class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
-  final FlexTableController _controller = FlexTableController();
-  late final FlexSortController _sortController = FlexSortController(
-    controller: _controller,
-  );
+  final _controller = FlexTableController();
+  late final _sortController = FlexSortController(controller: _controller);
 
-  final List<FlexTableCell> _headers = [
+  final _headers = <FlexTableCell>[
     const FlexTableCell(value: 'Small'),
     const FlexTableCell(value: 'Medium'),
     const FlexTableCell(value: 'Large'),
@@ -36,7 +34,7 @@ class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
     const FlexTableCell(value: 'Has Maximum'),
     const FlexTableCell(value: 'Sized'),
   ];
-  final List<FlexTableColumnSize> _sizes = [
+  final _sizes = <FlexTableColumnSize>[
     FlexTableColumnSize(flex: 0.5),
     FlexTableColumnSize(flex: 1.0),
     FlexTableColumnSize(flex: 2.0),

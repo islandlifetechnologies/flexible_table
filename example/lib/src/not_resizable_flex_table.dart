@@ -18,7 +18,7 @@ class NotResizableFlexTable extends StatefulWidget {
 class _NotResizableFlexTableState extends State<NotResizableFlexTable> {
   static const kColumns = 6;
 
-  final FlexTableController _controller = FlexTableController();
+  final _controller = FlexTableController();
 
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Random #$i'),

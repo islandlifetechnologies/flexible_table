@@ -17,7 +17,7 @@ class FilteredFlexTable extends StatefulWidget {
 
 class _FilteredFlexTableState extends State<FilteredFlexTable> {
   static const kColumns = 6;
-  final FlexTableController _controller = FlexTableController();
+  final _controller = FlexTableController();
   late final FlexFilterController _filterController = FlexFilterController(
     controller: _controller,
   );

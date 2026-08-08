@@ -16,10 +16,8 @@ class MixedWidgetsFlexTable extends StatefulWidget {
 class _MixedWidgetsFlexTable extends State<MixedWidgetsFlexTable> {
   static const kColumns = 6;
 
-  final FlexTableController controller = FlexTableController();
-  late final FlexSortController sortController = FlexSortController(
-    controller: controller,
-  );
+  final controller = FlexTableController();
+  late final sortController = FlexSortController(controller: controller);
 
   final List<FlexTableCell> headers = [
     FlexTableCell(
@@ -94,7 +92,7 @@ class StatefulCheckbox extends StatefulWidget {
 }
 
 class _StatefulCheckboxState extends State<StatefulCheckbox> {
-  bool _selected = false;
+  var _selected = false;
 
   @override
   Widget build(BuildContext context) {

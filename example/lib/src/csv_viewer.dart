@@ -29,11 +29,11 @@ class CsvViewer extends StatefulWidget {
 }
 
 class _CsvViewerState extends State<CsvViewer> {
-  final FlexTableController _controller = FlexTableController();
+  final _controller = FlexTableController();
   late final FlexFilterController _filterController = FlexFilterController(
     controller: _controller,
   );
-  late final FlexSortController _sortController = FlexSortController(
+  late final _sortController = FlexSortController(
     controller: _controller,
     tristate: widget.tristate,
   );
@@ -79,8 +79,9 @@ class _CsvViewerState extends State<CsvViewer> {
   Widget build(BuildContext context) {
     final headers = _headers;
     final rows = _rows?.map(
-      (r) =>
-          List<FlexTableCell>.from([for (var c in r) FlexTableCell(value: c)]),
+      (r) => List<FlexTableCell>.from([
+        for (final c in r) FlexTableCell(value: c),
+      ]),
     );
 
     return Scaffold(
@@ -98,7 +99,7 @@ class _CsvViewerState extends State<CsvViewer> {
                   : widget.filterable
                   ? FlexFilterHeaderCellBuilder(controller: _filterController)
                   : const FlexHeaderCellBuilder(),
-              initialData: [for (var r in rows) FlexTableRow(columns: r)],
+              initialData: [for (final r in rows) FlexTableRow(columns: r)],
               onRowSelected: (index) {
                 if (_selectedRows.contains(index)) {
                   _selectedRows.remove(index);

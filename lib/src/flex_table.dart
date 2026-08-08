@@ -56,12 +56,18 @@ abstract class FlexCellBuilder {
     required int rowIndex,
     required bool selected,
   }) {
+    final theme = Theme.of(context);
     Widget result = Align(
       alignment: alignment,
       child: Padding(padding: padding, child: child),
     );
 
-    final color = selected ? (selectedColor ?? Colors.black12) : this.color;
+    final color = selected
+        ? (selectedColor ??
+              (theme.brightness == Brightness.dark
+                  ? Colors.white.withValues(alpha: 0.25)
+                  : Colors.black.withValues(alpha: 0.25)))
+        : this.color;
 
     if (color != null) {
       result = Material(color: color, child: result);
@@ -257,7 +263,7 @@ class FlexFilterController<F> {
   /// Controller bound to the [FlexTable] to be able to apply filters to the
   /// table.
   final FlexTableController controller;
-  final StreamController<void> _controller = StreamController<void>.broadcast();
+  final _controller = StreamController<void>.broadcast();
 
   int? _filterIndex;
   String? _filterValue;
@@ -360,9 +366,9 @@ class FlexSortController {
   /// switch between ascending and descending.
   final bool tristate;
 
-  final StreamController<void> _controller = StreamController<void>.broadcast();
+  final _controller = StreamController<void>.broadcast();
 
-  bool _ascending = true;
+  var _ascending = true;
   int? _columnIndex;
 
   /// Returns whether the list is sorted in ascending order (Z at the top, A at
@@ -465,13 +471,13 @@ class FlexStripeCellBuilder extends FlexDataCellBuilder {
     super.alignment,
     this.even = Colors.transparent,
     super.maxLines,
-    this.odd = const Color(0x30FFEB3B),
+    this.odd,
     super.padding,
     super.selectedColor,
   });
 
   final Color even;
-  final Color odd;
+  final Color? odd;
 
   @override
   Widget build({
@@ -480,16 +486,24 @@ class FlexStripeCellBuilder extends FlexDataCellBuilder {
     required int columnIndex,
     required int rowIndex,
     required bool selected,
-  }) => Material(
-    color: rowIndex.isEven ? even : odd,
-    child: super.build(
-      child: child,
-      context: context,
-      columnIndex: columnIndex,
-      rowIndex: rowIndex,
-      selected: selected,
-    ),
-  );
+  }) {
+    final theme = Theme.of(context);
+    return Material(
+      color: rowIndex.isEven
+          ? even
+          : (odd ??
+                (theme.brightness == Brightness.dark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.05))),
+      child: super.build(
+        child: child,
+        context: context,
+        columnIndex: columnIndex,
+        rowIndex: rowIndex,
+        selected: selected,
+      ),
+    );
+  }
 }
 
 /// Table that is higly performant regardless of the number of rows and allows
@@ -545,7 +559,9 @@ class FlexTable extends StatefulWidget {
     this.onRowSelected,
     this.pushDividers = true,
     this.resizable = true,
+    this.scrollController,
     this.selectedRows = const [],
+    this.shrinkWrap = false,
   });
 
   /// The controller to provide two way communication between the table and
@@ -595,8 +611,16 @@ class FlexTable extends StatefulWidget {
   /// Defines whether the columns are resizable or not.
   final bool resizable;
 
+  /// Scroll controller for the table
+  final ScrollController? scrollController;
+
   /// Indicies of the rows that are selected within the table.
   final List<int> selectedRows;
+
+  /// When set to true, the table will not scroll and will instead fully render
+  /// at it's proper height.  This is fairly expensive and not typically
+  /// recommended.
+  final bool shrinkWrap;
 
   @override
   State createState() => _FlexTableState();
@@ -673,17 +697,15 @@ class FlexTableController {
                 : bValue.compareTo(aValue);
           });
 
-  final StreamController<List<Area>> _columnController =
-      StreamController<List<Area>>.broadcast();
-  final StreamController<void> _rowController =
-      StreamController<void>.broadcast();
+  final _columnController = StreamController<List<Area>>.broadcast();
+  final _rowController = StreamController<void>.broadcast();
 
   final FlexTableFilterer _filterFn;
   final FlexTableSorter _sortFn;
 
   List<FlexTableRow> _allRows = [];
   List<Area> _areas = [];
-  bool _ascending = false;
+  var _ascending = false;
   int? _filterIndex;
   String? _filterValue;
   List<FlexTableRow> _rows = [];
@@ -697,7 +719,7 @@ class FlexTableController {
   /// Returns the current size values for all columns.
   List<FlexTableColumnSize> get columnSizes {
     final sizes = <FlexTableColumnSize>[];
-    for (var area in _areas) {
+    for (final area in _areas) {
       sizes.add(
         FlexTableColumnSize(
           flex: area.flex,
@@ -794,7 +816,7 @@ class FlexTableController {
   /// one of the given [rows] was removed.
   void removeRows(Iterable<FlexTableRow> rows) {
     var removed = false;
-    for (var row in rows) {
+    for (final row in rows) {
       removed = _allRows.remove(row) || removed;
     }
 
@@ -808,6 +830,14 @@ class FlexTableController {
   /// when the row is removed;
   void removeRowAt(int index) {
     _allRows.removeAt(index);
+    _sortAndFilter();
+  }
+
+  /// Removes all the existing data from the table and replaces it with the
+  /// given [rows].
+  void setRows(Iterable<FlexTableRow> rows) {
+    _allRows.clear();
+    _allRows.addAll(rows);
     _sortAndFilter();
   }
 
@@ -874,7 +904,7 @@ class _FlexFilterHeaderCellState extends State<_FlexFilterHeaderCell> {
 
   @override
   void dispose() {
-    for (var sub in subscriptions) {
+    for (final sub in subscriptions) {
       sub.cancel();
     }
 
@@ -1030,7 +1060,7 @@ class _FlexSortHeaderCellState extends State<_FlexSortHeaderCell> {
 
   @override
   void dispose() {
-    for (var sub in subscriptions) {
+    for (final sub in subscriptions) {
       sub.cancel();
     }
 
@@ -1112,8 +1142,7 @@ class _FlexTableHeader extends StatefulWidget {
 }
 
 class _FlexTableHeaderState extends State<_FlexTableHeader> {
-  final MultiSplitViewController multiSplitViewController =
-      MultiSplitViewController();
+  final multiSplitViewController = MultiSplitViewController();
   final List<StreamSubscription> subscriptions = [];
 
   @override
@@ -1148,7 +1177,7 @@ class _FlexTableHeaderState extends State<_FlexTableHeader> {
   void dispose() {
     multiSplitViewController.removeListener(multiSplitViewControllerListener);
     multiSplitViewController.dispose();
-    for (var subscription in subscriptions) {
+    for (final subscription in subscriptions) {
       subscription.cancel();
     }
     subscriptions.clear();
@@ -1199,7 +1228,7 @@ class _FlexTableRow extends StatefulWidget {
     required this.index,
     required this.selected,
     required this.style,
-  }) : super(key: data.key);
+  }) : super(key: ValueKey(data.key));
 
   final FlexCellBuilder builder;
   final FlexTableController controller;
@@ -1213,7 +1242,7 @@ class _FlexTableRow extends StatefulWidget {
 }
 
 class _FlexTableRowState extends State<_FlexTableRow> {
-  final MultiSplitViewController controller = MultiSplitViewController();
+  final controller = MultiSplitViewController();
   final List<StreamSubscription> subscriptions = [];
 
   @override
@@ -1259,7 +1288,7 @@ class _FlexTableRowState extends State<_FlexTableRow> {
   @override
   void dispose() {
     controller.dispose();
-    for (var subscription in subscriptions) {
+    for (final subscription in subscriptions) {
       subscription.cancel();
     }
     subscriptions.clear();
@@ -1314,7 +1343,7 @@ class _FlexTableState extends State<FlexTable> {
 
   @override
   void dispose() {
-    for (var subscription in subscriptions) {
+    for (final subscription in subscriptions) {
       subscription.cancel();
     }
     subscriptions.clear();
@@ -1350,12 +1379,14 @@ class _FlexTableState extends State<FlexTable> {
               style: widget.headerStyle,
             ),
           ),
+          Divider(height: 0.0),
           Expanded(
             child: StreamBuilder(
               stream: widget.controller._rowController.stream,
               builder: (context, snapshot) => emptyDataBuilder != null
                   ? emptyDataBuilder(context)
                   : ListView.builder(
+                      controller: widget.scrollController,
                       itemBuilder: (context, index) => SizedBox(
                         height: widget.dataHeight,
                         child: Material(
@@ -1375,6 +1406,7 @@ class _FlexTableState extends State<FlexTable> {
                         ),
                       ),
                       itemCount: widget.controller._rows.length,
+                      shrinkWrap: widget.shrinkWrap,
                     ),
             ),
           ),

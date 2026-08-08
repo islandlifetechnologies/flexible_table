@@ -13,7 +13,7 @@ class EmptyFlexTable extends StatefulWidget {
 class _EmptyFlexTableState extends State<EmptyFlexTable> {
   static const kColumns = 6;
 
-  final FlexTableController _controller = FlexTableController();
+  final _controller = FlexTableController();
 
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Empty #$i'),

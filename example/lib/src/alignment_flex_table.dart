@@ -16,8 +16,8 @@ class AlignmentFlexTable extends StatefulWidget {
 
   final Alignment dataAlignment;
   final Alignment headerAlignment;
-  final bool sortable = true;
-  final bool striped = true;
+  final sortable = true;
+  final striped = true;
   final String title;
 
   @override
@@ -26,10 +26,8 @@ class AlignmentFlexTable extends StatefulWidget {
 
 class _AlignmentFlexTableState extends State<AlignmentFlexTable> {
   static const kColumns = 6;
-  final FlexTableController _controller = FlexTableController();
-  late final FlexSortController _sortController = FlexSortController(
-    controller: _controller,
-  );
+  final _controller = FlexTableController();
+  late final _sortController = FlexSortController(controller: _controller);
 
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Random #$i'),

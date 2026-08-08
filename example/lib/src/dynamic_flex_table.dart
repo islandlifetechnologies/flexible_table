@@ -25,10 +25,8 @@ class DynamicFlexTable extends StatefulWidget {
 class _DynamicFlexTableState extends State<DynamicFlexTable> {
   static const kColumns = 6;
 
-  final FlexTableController _controller = FlexTableController();
-  late final FlexSortController _sortController = FlexSortController(
-    controller: _controller,
-  );
+  final _controller = FlexTableController();
+  late final _sortController = FlexSortController(controller: _controller);
 
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Random #$i'),
