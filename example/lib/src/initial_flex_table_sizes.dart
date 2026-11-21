@@ -4,28 +4,20 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class InitialFlexTableSizes extends StatefulWidget {
-  const InitialFlexTableSizes({
-    super.key,
-    this.sortable = false,
-    this.striped = false,
-    required this.title,
-  });
-
-  final bool sortable;
-  final bool striped;
-  final String title;
-
+class const InitialFlexTableSizes({
+  super.key,
+  final bool sortable = false,
+  final bool striped = false,
+  required final String title,
+}) extends StatefulWidget {
   @override
   State createState() => _InitialFlexTableSizesState();
 }
 
-class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
+class _InitialFlexTableSizesState() extends State<InitialFlexTableSizes> {
   final _controller = FlexTableController();
-  late final _sortController = FlexSortController(controller: _controller);
-
   final _headers = <FlexTableCell>[
     const FlexTableCell(value: 'Small'),
     const FlexTableCell(value: 'Medium'),
@@ -34,6 +26,7 @@ class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
     const FlexTableCell(value: 'Has Maximum'),
     const FlexTableCell(value: 'Sized'),
   ];
+
   final _sizes = <FlexTableColumnSize>[
     FlexTableColumnSize(flex: 0.5),
     FlexTableColumnSize(flex: 1.0),
@@ -42,6 +35,7 @@ class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
     FlexTableColumnSize(maxFlex: 2.0),
     FlexTableColumnSize(size: 200.0),
   ];
+  late final _sortController = FlexSortController(controller: _controller);
 
   late final Timer _timer;
 
@@ -77,7 +71,6 @@ class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
         actions: [
           StreamBuilder(
             stream: _controller.rowStream,
@@ -89,16 +82,17 @@ class _InitialFlexTableSizesState extends State<InitialFlexTableSizes> {
             ),
           ),
         ],
+        title: Text(widget.title),
       ),
       body: FlexTable(
         controller: _controller,
         dataBuilder: widget.striped
             ? const FlexStripeCellBuilder()
             : const FlexDataCellBuilder(),
-        headers: _headers,
         headerBuilder: widget.sortable
             ? FlexSortHeaderCellBuilder(controller: _sortController)
             : const FlexHeaderCellBuilder(),
+        headers: _headers,
         initialColumnSizes: _sizes,
       ),
     );

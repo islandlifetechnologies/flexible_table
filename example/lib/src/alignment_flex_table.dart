@@ -4,34 +4,28 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class AlignmentFlexTable extends StatefulWidget {
-  const AlignmentFlexTable({
-    required this.dataAlignment,
-    required this.headerAlignment,
-    super.key,
-    required this.title,
-  });
-
-  final Alignment dataAlignment;
-  final Alignment headerAlignment;
+class const AlignmentFlexTable({
+  required final Alignment dataAlignment,
+  required final Alignment headerAlignment,
+  super.key,
+  required final String title,
+}) extends StatefulWidget {
   final sortable = true;
   final striped = true;
-  final String title;
-
   @override
   State createState() => _AlignmentFlexTableState();
 }
 
-class _AlignmentFlexTableState extends State<AlignmentFlexTable> {
+class _AlignmentFlexTableState() extends State<AlignmentFlexTable> {
   static const kColumns = 6;
   final _controller = FlexTableController();
-  late final _sortController = FlexSortController(controller: _controller);
-
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Random #$i'),
   ];
+
+  late final _sortController = FlexSortController(controller: _controller);
 
   late final Timer _timer;
 
@@ -67,7 +61,6 @@ class _AlignmentFlexTableState extends State<AlignmentFlexTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
         actions: [
           StreamBuilder(
             stream: _controller.rowStream,
@@ -79,15 +72,16 @@ class _AlignmentFlexTableState extends State<AlignmentFlexTable> {
             ),
           ),
         ],
+        title: Text(widget.title),
       ),
       body: FlexTable(
         controller: _controller,
         dataBuilder: FlexStripeCellBuilder(alignment: widget.dataAlignment),
-        headers: _headers,
         headerBuilder: FlexSortHeaderCellBuilder(
           alignment: widget.headerAlignment,
           controller: _sortController,
         ),
+        headers: _headers,
       ),
     );
   }

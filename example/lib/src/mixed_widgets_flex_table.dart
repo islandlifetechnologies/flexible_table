@@ -4,28 +4,26 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class MixedWidgetsFlexTable extends StatefulWidget {
-  const MixedWidgetsFlexTable({super.key});
-
+class const MixedWidgetsFlexTable({super.key}) extends StatefulWidget {
   @override
   State createState() => _MixedWidgetsFlexTable();
 }
 
-class _MixedWidgetsFlexTable extends State<MixedWidgetsFlexTable> {
+class _MixedWidgetsFlexTable() extends State<MixedWidgetsFlexTable> {
   static const kColumns = 6;
 
   final controller = FlexTableController();
-  late final sortController = FlexSortController(controller: controller);
-
   final List<FlexTableCell> headers = [
     FlexTableCell(
       value: 'false',
-      child: Checkbox(value: false, onChanged: (_) {}),
+      child: Checkbox(onChanged: (_) {}, value: false),
     ),
     for (var i = 1; i < kColumns; i++) FlexTableCell(value: 'Random #$i'),
   ];
+
+  late final sortController = FlexSortController(controller: controller);
 
   late final Timer timer;
 
@@ -61,7 +59,6 @@ class _MixedWidgetsFlexTable extends State<MixedWidgetsFlexTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mixed Widgets'),
         actions: [
           StreamBuilder(
             stream: controller.rowStream,
@@ -73,32 +70,31 @@ class _MixedWidgetsFlexTable extends State<MixedWidgetsFlexTable> {
             ),
           ),
         ],
+        title: const Text('Mixed Widgets'),
       ),
       body: FlexTable(
         controller: controller,
         dataBuilder: const FlexStripeCellBuilder(),
-        headers: headers,
         headerBuilder: FlexSortHeaderCellBuilder(controller: sortController),
+        headers: headers,
       ),
     );
   }
 }
 
-class StatefulCheckbox extends StatefulWidget {
-  const StatefulCheckbox({super.key});
-
+class const StatefulCheckbox({super.key}) extends StatefulWidget {
   @override
   State createState() => _StatefulCheckboxState();
 }
 
-class _StatefulCheckboxState extends State<StatefulCheckbox> {
+class _StatefulCheckboxState() extends State<StatefulCheckbox> {
   var _selected = false;
 
   @override
   Widget build(BuildContext context) {
     return Checkbox(
-      value: _selected,
       onChanged: (checked) => setState(() => _selected = checked == true),
+      value: _selected,
     );
   }
 }

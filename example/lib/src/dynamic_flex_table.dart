@@ -4,33 +4,27 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class DynamicFlexTable extends StatefulWidget {
-  const DynamicFlexTable({
-    super.key,
-    this.sortable = false,
-    this.striped = false,
-    required this.title,
-  });
-
-  final bool sortable;
-  final bool striped;
-  final String title;
-
+class const DynamicFlexTable({
+  super.key,
+  final bool sortable = false,
+  final bool striped = false,
+  required final String title,
+}) extends StatefulWidget {
   @override
   State createState() => _DynamicFlexTableState();
 }
 
-class _DynamicFlexTableState extends State<DynamicFlexTable> {
+class _DynamicFlexTableState() extends State<DynamicFlexTable> {
   static const kColumns = 6;
 
   final _controller = FlexTableController();
-  late final _sortController = FlexSortController(controller: _controller);
-
   final List<FlexTableCell> _headers = [
     for (var i = 1; i <= kColumns; i++) FlexTableCell(value: 'Random #$i'),
   ];
+
+  late final _sortController = FlexSortController(controller: _controller);
 
   late final Timer _timer;
 
@@ -62,7 +56,6 @@ class _DynamicFlexTableState extends State<DynamicFlexTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
         actions: [
           StreamBuilder(
             stream: _controller.rowStream,
@@ -74,20 +67,20 @@ class _DynamicFlexTableState extends State<DynamicFlexTable> {
             ),
           ),
         ],
+        title: Text(widget.title),
       ),
       body: FlexTable(
         controller: _controller,
         dataBuilder: widget.striped
             ? const FlexStripeCellBuilder()
             : const FlexDataCellBuilder(),
-        headers: _headers,
         headerBuilder: widget.sortable
             ? FlexSortHeaderCellBuilder(controller: _sortController)
             : const FlexHeaderCellBuilder(),
+        headers: _headers,
         onRowSelected: (index) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Row Selected: $index')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Row Selected: $index')));
         },
       ),
     );

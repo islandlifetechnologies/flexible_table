@@ -8,3 +8,20 @@ analyzer:
     - macos/**
     - linux/**
 include: package:ilt_lints/lints.yaml
+
+plugins:
+  ilt_lints:
+    version: ^2.3.0
+    diagnostics:
+      prefer_const_constructors: true
+      prefer_named_parameters: true
+      prefer_primary_constructors: true
+      sort_fields: true
+      sort_functions_alphabetically: true
+      sort_functions_by_scope: true
+      sort_named_parameters: true
+      sort_widget_functions: true
+      sort_widget_parameters: true
+      use_clock: true
+      use_file_system: true
+      valid_json_serializable: true

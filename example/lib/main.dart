@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:table_example/src/alignment_flex_table.dart';
 import 'package:table_example/src/csv_viewer.dart';
 import 'package:table_example/src/dynamic_flex_table.dart';
@@ -14,27 +14,22 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+class const MyApp({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flexible Table',
+      home: const MyHomePage(title: 'Flex Table Demo'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flex Table Demo'),
+      title: 'Flexible Table',
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
+class const MyHomePage({super.key, required final String title})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -179,8 +174,8 @@ class MyHomePage extends StatelessWidget {
                 builder: (context) => const CsvViewer(
                   asset: 'assets/iou_zipcodes.csv',
                   sortable: true,
-                  tristate: true,
                   title: '52k rows; Sortable; Tristate',
+                  tristate: true,
                 ),
               ),
             ),
@@ -215,10 +210,10 @@ class MyHomePage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const CsvViewer(
                   asset: 'assets/ev_data.csv',
-                  striped: true,
                   sortable: true,
-                  tristate: true,
+                  striped: true,
                   title: '190k rows; Sortable; Tristate; Striped',
+                  tristate: true,
                 ),
               ),
             ),
@@ -229,8 +224,8 @@ class MyHomePage extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const CsvViewer(
                   asset: 'assets/iou_zipcodes.csv',
-                  striped: true,
                   sortable: true,
+                  striped: true,
                   title: '52k rows; Sortable; Striped',
                 ),
               ),

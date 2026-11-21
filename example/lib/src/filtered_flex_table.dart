@@ -4,18 +4,15 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class FilteredFlexTable extends StatefulWidget {
-  const FilteredFlexTable({super.key, required this.title});
-
-  final String title;
-
+class const FilteredFlexTable({super.key, required final String title})
+    extends StatefulWidget {
   @override
   State createState() => _FilteredFlexTableState();
 }
 
-class _FilteredFlexTableState extends State<FilteredFlexTable> {
+class _FilteredFlexTableState() extends State<FilteredFlexTable> {
   static const kColumns = 6;
   final _controller = FlexTableController();
   late final FlexFilterController _filterController = FlexFilterController(
@@ -56,7 +53,6 @@ class _FilteredFlexTableState extends State<FilteredFlexTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
         actions: [
           StreamBuilder(
             stream: _controller.rowStream,
@@ -70,14 +66,15 @@ class _FilteredFlexTableState extends State<FilteredFlexTable> {
             ),
           ),
         ],
+        title: Text(widget.title),
       ),
       body: FlexTable(
         controller: _controller,
         dataBuilder: const FlexStripeCellBuilder(),
-        headers: _headers,
         headerBuilder: FlexFilterHeaderCellBuilder(
           controller: _filterController,
         ),
+        headers: _headers,
       ),
     );
   }

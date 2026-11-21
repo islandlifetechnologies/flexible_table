@@ -3,42 +3,33 @@ import 'dart:isolate';
 import 'package:csv/csv.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
-class CsvViewer extends StatefulWidget {
-  const CsvViewer({
-    required this.asset,
-    super.key,
-    this.filterable = false,
-    this.sortable = false,
-    this.striped = false,
-    required this.title,
-    this.tristate = false,
-  });
-
-  final String asset;
-  final bool filterable;
-  final bool sortable;
-  final bool striped;
-  final String title;
-  final bool tristate;
-
+class const CsvViewer({
+  required final String asset,
+  final bool filterable = false,
+  super.key,
+  final bool sortable = false,
+  final bool striped = false,
+  required final String title,
+  final bool tristate = false,
+}) extends StatefulWidget {
   @override
   State createState() => _CsvViewerState();
 }
 
-class _CsvViewerState extends State<CsvViewer> {
+class _CsvViewerState() extends State<CsvViewer> {
   final _controller = FlexTableController();
   late final FlexFilterController _filterController = FlexFilterController(
     controller: _controller,
   );
+  final List<int> _selectedRows = [];
+
   late final _sortController = FlexSortController(
     controller: _controller,
     tristate: widget.tristate,
   );
-
-  final List<int> _selectedRows = [];
 
   List<FlexTableCell>? _headers;
   List<List<String>>? _rows;
@@ -48,6 +39,14 @@ class _CsvViewerState extends State<CsvViewer> {
     super.initState();
 
     _initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _filterController.dispose();
+    _sortController.dispose();
+    super.dispose();
   }
 
   Future<void> _initialize() async {
@@ -68,14 +67,6 @@ class _CsvViewerState extends State<CsvViewer> {
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    _filterController.dispose();
-    _sortController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final headers = _headers;
     final rows = _rows?.map(
@@ -93,12 +84,12 @@ class _CsvViewerState extends State<CsvViewer> {
               dataBuilder: widget.striped
                   ? const FlexStripeCellBuilder()
                   : const FlexDataCellBuilder(),
-              headers: headers,
               headerBuilder: widget.sortable
                   ? FlexSortHeaderCellBuilder(controller: _sortController)
                   : widget.filterable
                   ? FlexFilterHeaderCellBuilder(controller: _filterController)
                   : const FlexHeaderCellBuilder(),
+              headers: headers,
               initialData: [for (final r in rows) FlexTableRow(columns: r)],
               onRowSelected: (index) {
                 if (_selectedRows.contains(index)) {
@@ -108,9 +99,8 @@ class _CsvViewerState extends State<CsvViewer> {
                 }
 
                 setState(() {});
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('Row: $index')));
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text('Row: $index')));
               },
               selectedRows: _selectedRows,
             ),
@@ -159,9 +149,7 @@ Future<List<List<String>>?> _offMainThreadLoad(_IsolateData iData) async {
   return result;
 }
 
-class _IsolateData {
-  _IsolateData({required this.data, required this.sendPort});
-
-  final String data;
-  final SendPort sendPort;
-}
+class const _IsolateData({
+  required final String data,
+  required final SendPort sendPort,
+}) {}

@@ -1,3 +1,8 @@
+## 4.0.0
+
+- Updated to the latest `ilt_lints` and applied the rules which resulted in refactoring the codebase for things like named parameters vs positions.
+- Updated to use `material_ui` and away from the old `flutter:material` package.
+
 ## 3.2.0
 
 - Updated FlexStripeCellBuilder to utilize the theme for stripes.

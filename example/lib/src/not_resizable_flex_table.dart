@@ -4,18 +4,15 @@ import 'dart:math';
 import 'package:english_words/english_words.dart';
 import 'package:flexible_table/flexible_table.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class NotResizableFlexTable extends StatefulWidget {
-  const NotResizableFlexTable({super.key, required this.title});
-
-  final String title;
-
+class const NotResizableFlexTable({super.key, required final String title})
+    extends StatefulWidget {
   @override
   State createState() => _NotResizableFlexTableState();
 }
 
-class _NotResizableFlexTableState extends State<NotResizableFlexTable> {
+class _NotResizableFlexTableState() extends State<NotResizableFlexTable> {
   static const kColumns = 6;
 
   final _controller = FlexTableController();
@@ -53,7 +50,6 @@ class _NotResizableFlexTableState extends State<NotResizableFlexTable> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
         actions: [
           StreamBuilder(
             stream: _controller.rowStream,
@@ -65,12 +61,13 @@ class _NotResizableFlexTableState extends State<NotResizableFlexTable> {
             ),
           ),
         ],
+        title: Text(widget.title),
       ),
       body: FlexTable(
         controller: _controller,
         dataBuilder: const FlexStripeCellBuilder(),
-        headers: _headers,
         headerBuilder: const FlexHeaderCellBuilder(),
+        headers: _headers,
         resizable: false,
       ),
     );
